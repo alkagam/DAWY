@@ -1,0 +1,347 @@
+<Window x:Class="DawEngine.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DAWY" Height="860" Width="1520"
+        Background="#0A0A0A" WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" MinWidth="1200" MinHeight="700">
+
+    <Window.Resources>
+
+        <!-- Estilo base para botones de transporte -->
+        <Style x:Key="TransportBtn" TargetType="Button">
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="Foreground" Value="#888"/>
+            <Setter Property="BorderBrush" Value="#2A2A2A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2A2A2A"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- LED toggle circular -->
+        <Style x:Key="LedToggle" TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="Led" Width="10" Height="10" CornerRadius="5"
+                                Background="#2A2A2A" BorderBrush="#444" BorderThickness="1" Cursor="Hand"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Led" Property="Background" Value="#00E5FF"/>
+                                <Setter TargetName="Led" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#00E5FF" BlurRadius="6" ShadowDepth="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botón power de pedal -->
+        <Style x:Key="PowerBtn" TargetType="Button">
+            <Setter Property="Width" Value="22"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="BorderBrush" Value="#333"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="11">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>    <!-- Header / Transport -->
+            <RowDefinition Height="*"/>     <!-- Main area -->
+            <RowDefinition Height="220"/>   <!-- Effects Rack -->
+        </Grid.RowDefinitions>
+
+        <!-- ══════════════════════════════════════════════════════
+             ROW 0: HEADER + TRANSPORT
+        ══════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="#0D0D0D" BorderBrush="#1A1A1A" BorderThickness="0,0,0,1">
+            <Grid Margin="16,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="320"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Logo -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="DAWY" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                    <TextBlock Text="DAW  //  ESIME" Foreground="#444" FontSize="10"/>
+                </StackPanel>
+
+                <!-- Transporte centrado -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Style="{StaticResource TransportBtn}" Content="⏮" Margin="0,0,6,0" Click="BtnRewind_Click"/>
+                    <Button Name="BtnStop" Style="{StaticResource TransportBtn}" Content="⏹" Margin="0,0,6,0" Click="BtnStop_Click" IsEnabled="False"/>
+                    <Button Name="BtnPlay" Style="{StaticResource TransportBtn}" Margin="0,0,6,0" Click="BtnStart_Click">
+                        <TextBlock Text="▶" Foreground="#00E5FF" FontSize="16"/>
+                    </Button>
+                    <Button Style="{StaticResource TransportBtn}" Content="⏭" Margin="0,0,16,0" Click="BtnFwd_Click"/>
+                    <Button Name="BtnRec" Style="{StaticResource TransportBtn}" Margin="0,0,0,0" Click="BtnRec_Click">
+                        <Ellipse Width="14" Height="14" Fill="#FF3333">
+                            <Ellipse.Effect>
+                                <DropShadowEffect Color="#FF3333" BlurRadius="8" ShadowDepth="0"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                    </Button>
+                </StackPanel>
+
+                <!-- Tiempo + BPM + señal -->
+                <Grid Grid.Column="2" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- VU Bar horizontal (RMS) -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock Text="SIGNAL" Foreground="#333" FontSize="8" Margin="0,0,0,3"/>
+                        <Border Width="120" Height="8" CornerRadius="4" Background="#111" HorizontalAlignment="Left">
+                            <Border Name="VuFill" HorizontalAlignment="Left" Width="0" CornerRadius="4" Background="#00E5FF"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="0,0,16,0">
+                        <TextBlock Text="TIME" Foreground="#333" FontSize="8"/>
+                        <TextBlock Name="TxtTime" Text="00:00:00:00" Foreground="#00E5FF" FontSize="16" FontFamily="Courier New" FontWeight="Bold"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="BPM" Foreground="#333" FontSize="8"/>
+                        <TextBlock Name="TxtBpm" Text="120.0" Foreground="#FF007F" FontSize="16" FontFamily="Courier New" FontWeight="Bold"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ══════════════════════════════════════════════════════
+             ROW 1: MAIN AREA (Chat | Tracks | Master)
+        ══════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>   <!-- Chat IA -->
+                <ColumnDefinition Width="*"/>     <!-- Arrangement -->
+                <ColumnDefinition Width="100"/>   <!-- Master Out -->
+            </Grid.ColumnDefinitions>
+
+            <!-- ── CHAT IA ── -->
+            <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#1A1A1A" BorderThickness="0,0,1,0">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="⚙ Draw.ia" Foreground="#FF007F" FontSize="11" FontWeight="Bold"/>
+                        <Border Height="1" Background="#1A1A1A" Margin="0,6,0,0"/>
+                    </StackPanel>
+
+                    <ScrollViewer Name="ChatScroller" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Name="ChatPanel">
+                            <Border Background="#111" CornerRadius="4" Padding="8" Margin="0,0,0,6">
+                                <TextBlock Text="SESSION STARTED" Foreground="#333" FontSize="9"
+                                           FontFamily="Courier New" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Background="#141414" CornerRadius="4" Padding="8" Margin="0,0,0,6">
+                                <TextBlock Text="Draw.ia inicializado. Escribe un prompt para reconfigurar el motor de audio."
+                                           Foreground="#666" TextWrapping="Wrap" FontSize="11"/>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="2" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="#141414" CornerRadius="4" BorderBrush="#222" BorderThickness="1">
+                            <TextBox Name="TxtPrompt" Background="Transparent" Foreground="#AAA"
+                                     BorderThickness="0" Padding="8,6" FontSize="11"
+                                     CaretBrush="#00E5FF" KeyDown="TxtPrompt_KeyDown"
+                                     TextWrapping="Wrap" MaxLines="3"/>
+                        </Border>
+                        <Button Name="BtnSend" Grid.Column="1" Margin="4,0,0,0"
+                                Background="#FF007F" BorderThickness="0" Cursor="Hand"
+                                Click="BtnSend_Click" Height="30" Width="30">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                                        <TextBlock Text="▶" Foreground="White" FontSize="10"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ── ARRANGEMENT VIEW ── -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>  <!-- Regla de tiempo -->
+                    <RowDefinition Height="*"/>   <!-- Tracks -->
+                </Grid.RowDefinitions>
+
+                <!-- Encabezado del arrangement -->
+                <Border Grid.Row="0" Background="#0D0D0D" BorderBrush="#1A1A1A" BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                            <TextBlock Text="ARRANGEMENT" Foreground="#333"
+                                       FontSize="9" FontFamily="Courier New" FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <!-- Regla de compases -->
+                        <Canvas Grid.Column="1" Name="RulerCanvas" Height="30"/>
+                        <!-- Botones de pista -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
+                            <Button Name="BtnAddTrack" Content="+ PISTA" Click="BtnAddTrack_Click"
+                                    Background="#1A1A1A" Foreground="#00E5FF" BorderBrush="#00E5FF"
+                                    BorderThickness="1" FontSize="9" FontWeight="Bold"
+                                    Padding="8,3" Margin="0,0,6,0" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button Name="BtnSaveSession" Content="💾 GUARDAR" Click="BtnSaveSession_Click"
+                                    Background="#1A1A1A" Foreground="#FFD700" BorderBrush="#FFD700"
+                                    BorderThickness="1" FontSize="9" FontWeight="Bold"
+                                    Padding="8,3" Cursor="Hand">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Lista de tracks -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Name="TrackListPanel"/>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- ── MASTER OUT ── -->
+            <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#1A1A1A" BorderThickness="1,0,0,0">
+                <StackPanel Margin="12" VerticalAlignment="Top">
+                    <TextBlock Text="MASTER OUT" Foreground="#333" FontSize="8"
+                               FontFamily="Courier New" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,8,0,12"/>
+
+                    <!-- Medidor vertical estéreo -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <!-- Canal L -->
+                        <Border Width="18" Height="120" Background="#111" CornerRadius="3" Margin="0,0,3,0">
+                            <Grid VerticalAlignment="Bottom">
+                                <Border Name="VuL" Width="18" Background="#00E5FF" CornerRadius="3" Height="0" VerticalAlignment="Bottom"/>
+                            </Grid>
+                        </Border>
+                        <!-- Canal R -->
+                        <Border Width="18" Height="120" Background="#111" CornerRadius="3">
+                            <Grid VerticalAlignment="Bottom">
+                                <Border Name="VuR" Width="18" Background="#00E5FF" CornerRadius="3" Height="0" VerticalAlignment="Bottom"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- dB label -->
+                    <Border Background="#111" CornerRadius="3" Padding="4,3" HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <TextBlock Name="TxtDb" Text="-∞ dB" Foreground="#00E5FF"
+                                   FontSize="10" FontFamily="Courier New" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <!-- Knob de volumen master -->
+                    <TextBlock Text="VOL" Foreground="#444" FontSize="8" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                    <Slider Name="SldMasterVol" Orientation="Vertical" Height="60" Minimum="0" Maximum="1"
+                            Value="0.8" HorizontalAlignment="Center" ValueChanged="SldMasterVol_Changed"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ══════════════════════════════════════════════════════
+             ROW 2: EFFECTS RACK
+        ══════════════════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="#0D0D0D" BorderBrush="#1A1A1A" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="22"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header del rack -->
+                <Border Grid.Row="0" Background="#0A0A0A" Padding="12,0">
+                    <TextBlock Text="⣿⣿ EFFECTS RACK  //  MASTER BUS" Foreground="#2A2A2A"
+                               FontSize="9" FontFamily="Courier New" FontWeight="Bold" VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Pedales con scroll horizontal -->
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal" Name="RackPanel" Margin="12,8,12,8"/>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>

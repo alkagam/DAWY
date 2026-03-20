@@ -1,0 +1,225 @@
+<Window x:Class="DawEngine.UI.WelcomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DAWY" Height="560" Width="860"
+        Background="#0A0A0A" WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize" FontFamily="Segoe UI"
+        WindowStyle="None" AllowsTransparency="True">
+
+    <Window.Resources>
+        <Style x:Key="BigBtn" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="White"/>
+                                <Setter TargetName="Bd" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="White" BlurRadius="12" ShadowDepth="0" Opacity="0.15"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RecentItem" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6" Padding="12,8">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1A1A1A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Drag de ventana sin bordes -->
+    <Border Background="#0A0A0A" CornerRadius="12" MouseLeftButtonDown="Border_MouseDown">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="40" ShadowDepth="0" Opacity="0.8"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="340"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ── COLUMNA IZQUIERDA: Logo + acciones principales ── -->
+            <Border Grid.Column="0" Background="#0D0D0D" CornerRadius="12,0,0,12">
+                <StackPanel Margin="32,36,32,36">
+
+                    <!-- Logo -->
+                    <StackPanel Margin="0,0,0,36">
+                        <TextBlock Text="DAWY" Foreground="White"
+                                   FontSize="22" FontWeight="Bold"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <Border Background="#FF007F" CornerRadius="3" Padding="6,2" Margin="0,0,6,0">
+                                <TextBlock Text="DAW" Foreground="White" FontSize="9" FontWeight="Bold"/>
+                            </Border>
+                            <Border Background="#1A1A1A" CornerRadius="3" Padding="6,2">
+                                <TextBlock Text="PRO  //  ESIME" Foreground="#555" FontSize="9" FontFamily="Courier New"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Nuevo proyecto -->
+                    <TextBlock Text="NUEVO PROYECTO" Foreground="#444" FontSize="9"
+                               FontFamily="Courier New" Margin="0,0,0,10"/>
+
+                    <!-- Tarjeta: Proyecto vacío -->
+                    <Button Style="{StaticResource BigBtn}"
+                            Background="#111" BorderBrush="#222"
+                            Height="80" Margin="0,0,0,10"
+                            Click="BtnNewEmpty_Click">
+                        <StackPanel>
+                            <TextBlock Text="⬜  PROYECTO VACÍO" Foreground="White"
+                                       FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Empieza desde cero" Foreground="#555"
+                                       FontSize="10" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Plantillas -->
+                    <TextBlock Text="PLANTILLAS" Foreground="#444" FontSize="9"
+                               FontFamily="Courier New" Margin="0,14,0,10"/>
+
+                    <Button Style="{StaticResource BigBtn}"
+                            Background="#0F1A0F" BorderBrush="#1A2A1A"
+                            Height="60" Margin="0,0,0,8"
+                            Click="BtnTemplate_Click" Tag="Guitar">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎸" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Guitar Session" Foreground="#88FF88" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="Gain · Clipper · Delay · Reverb" Foreground="#3A5A3A" FontSize="9"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource BigBtn}"
+                            Background="#1A0F1A" BorderBrush="#2A1A2A"
+                            Height="60" Margin="0,0,0,8"
+                            Click="BtnTemplate_Click" Tag="Beat">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🥁" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Beat Production" Foreground="#CC88FF" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="Compressor · EQ · Bitcrusher" Foreground="#4A2A5A" FontSize="9"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource BigBtn}"
+                            Background="#0F0F1A" BorderBrush="#1A1A2A"
+                            Height="60" Margin="0,0,0,0"
+                            Click="BtnTemplate_Click" Tag="Podcast">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎙" FontSize="20" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Podcast / Voz" Foreground="#8899FF" FontSize="12" FontWeight="SemiBold"/>
+                                <TextBlock Text="Gate · Comp · HP Filter" Foreground="#2A2A5A" FontSize="9"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+
+                </StackPanel>
+            </Border>
+
+            <!-- ── COLUMNA DERECHA: Recientes + Abrir ── -->
+            <Grid Grid.Column="1" Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header derecho -->
+                <Grid Grid.Row="0" Margin="28,36,28,20">
+                    <TextBlock Text="PROYECTOS RECIENTES" Foreground="#444"
+                               FontSize="9" FontFamily="Courier New" FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <Button HorizontalAlignment="Right" Content="✕" Click="BtnClose_Click"
+                            Background="Transparent" BorderThickness="0"
+                            Foreground="#444" FontSize="14" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock x:Name="X" Text="✕" Foreground="#444" FontSize="14"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="X" Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+
+                <!-- Lista de recientes -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="16,0,16,0">
+                    <StackPanel Name="RecentPanel">
+
+                        <!-- Placeholder vacío -->
+                        <Border Background="#0D0D0D" CornerRadius="8" Padding="24" Margin="12,0,12,0">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="📂" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                                <TextBlock Text="No hay proyectos recientes" Foreground="#333"
+                                           FontSize="12" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Crea uno nuevo o abre un archivo existente"
+                                           Foreground="#222" FontSize="10" HorizontalAlignment="Center"
+                                           Margin="0,6,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Footer: abrir archivo -->
+                <Border Grid.Row="2" BorderBrush="#1A1A1A" BorderThickness="0,1,0,0" Padding="28,16">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource BigBtn}"
+                                Background="#1A1A1A" BorderBrush="#2A2A2A"
+                                Height="36" Padding="16,0"
+                                Click="BtnOpen_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📂  " FontSize="13" VerticalAlignment="Center"/>
+                                <TextBlock Text="Abrir sesión..." Foreground="#AAA"
+                                           FontSize="11" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <TextBlock Text="v1.0  DAWY  ESIME  IPN" Foreground="#222"
+                                   FontSize="9" FontFamily="Courier New"
+                                   VerticalAlignment="Center" Margin="16,0,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

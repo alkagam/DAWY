@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DawEngine.App/DawEngine.App.csproj" />
+  <Project Path="DawEngine.Core/DawEngine.Core.csproj" />
+</Solution>
