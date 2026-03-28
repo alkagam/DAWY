@@ -1,0 +1,343 @@
+<Window x:Class="DawEngine.UI.LiveWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DAWY — Modo En Vivo" Height="900" Width="1440"
+        Background="#0A0A0A" WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" Closing="Window_Closing">
+
+    <Window.Resources>
+        <Style x:Key="TransBtn" TargetType="Button">
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="#141414"/>
+            <Setter Property="BorderBrush" Value="#1E1E1E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#222"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.35"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="LedToggle" TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="Led" Width="10" Height="10" CornerRadius="5"
+                                Background="#1A1A1A" BorderBrush="#333" BorderThickness="1" Cursor="Hand"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Led" Property="Background" Value="#FF007F"/>
+                                <Setter TargetName="Led" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect Color="#FF007F" BlurRadius="7" ShadowDepth="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TuningBtn" TargetType="Button">
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Background" Value="#111"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="BorderBrush" Value="#1E1E1E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="9"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4" Padding="6,0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#1A0808"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#FF007F"/>
+                                <Setter Property="Foreground" Value="#FF007F"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56"/>   <!-- Header -->
+            <RowDefinition Height="*"/>    <!-- Centro -->
+            <RowDefinition Height="260"/>  <!-- Pedalera grande -->
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <Border Grid.Row="0" Background="#0D0D0D" BorderBrush="#141414" BorderThickness="0,0,0,1">
+            <Grid Margin="16,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="DAWY" Foreground="White" FontSize="16" FontWeight="Bold" Margin="0,0,10,0"/>
+                    <Border Background="#1A0808" CornerRadius="4" Padding="8,3" Margin="0,0,8,0">
+                        <TextBlock Text="EN VIVO" Foreground="#FF007F" FontSize="9" FontFamily="Courier New" FontWeight="Bold"/>
+                    </Border>
+                    <Border Background="#141414" CornerRadius="4" Padding="8,3">
+                        <TextBlock Name="TxtInstrument" Text="Guitarra eléctrica" Foreground="#444" FontSize="9" FontFamily="Courier New"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Name="BtnStart" Style="{StaticResource TransBtn}" Margin="0,0,8,0" Click="BtnStart_Click">
+                        <TextBlock Text="▶" Foreground="#FF007F" FontSize="16"/>
+                    </Button>
+                    <Button Name="BtnStop" Style="{StaticResource TransBtn}" IsEnabled="False" Click="BtnStop_Click" Margin="0,0,20,0">
+                        <TextBlock Text="⏹" Foreground="#666" FontSize="14"/>
+                    </Button>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="SIGNAL" Foreground="#1E1E1E" FontSize="8" HorizontalAlignment="Center" Margin="0,0,0,3"/>
+                        <Border Width="160" Height="7" Background="#111" CornerRadius="4">
+                            <Border Name="VuFill" HorizontalAlignment="Left" Width="0" Background="#FF007F" CornerRadius="4"/>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#111" CornerRadius="6" Padding="10,5" Margin="0,0,8,0" BorderBrush="#1E1E1E" BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="PRESET: " Foreground="#333" FontSize="9" FontFamily="Courier New" VerticalAlignment="Center"/>
+                            <TextBlock Name="TxtPresetName" Text="Sin preset" Foreground="#555" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Button Style="{StaticResource TransBtn}" Width="36" Height="36" Margin="0,0,6,0" Click="BtnSavePreset_Click">
+                        <TextBlock Text="💾" FontSize="15"/>
+                    </Button>
+                    <Button Style="{StaticResource TransBtn}" Width="36" Height="36" Click="BtnLoadPreset_Click">
+                        <TextBlock Text="📂" FontSize="15"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ZONA CENTRAL -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="230"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="195"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Draw.ia -->
+            <Border Grid.Column="0" Background="#0D0D0D" BorderBrush="#141414" BorderThickness="0,0,1,0">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                        <TextBlock Text="✦ Draw.ia" Foreground="#FF007F" FontSize="13" FontWeight="Bold"/>
+                        <TextBlock Name="TxtInstrumentSub" Text="Guitarra eléctrica" Foreground="#333" FontSize="9" Margin="0,2,0,6"/>
+                        <Border Height="1" Background="#141414"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,0,6">
+                        <TextBlock Text="PRESETS RÁPIDOS" Foreground="#222" FontSize="8" FontFamily="Courier New" Margin="0,0,0,5"/>
+                        <StackPanel Name="QuickPresets"/>
+                        <Border Height="1" Background="#141414" Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <ScrollViewer Name="ChatScroller" Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0">
+                        <StackPanel Name="ChatPanel">
+                            <Border Background="#111" CornerRadius="5" Padding="8" Margin="0,0,0,5">
+                                <TextBlock Text="Draw.ia listo. Dime qué sonido quieres." Foreground="#444" TextWrapping="Wrap" FontSize="11"/>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="3" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="28"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Background="#111" CornerRadius="5" BorderBrush="#1E1E1E" BorderThickness="1">
+                            <TextBox Name="TxtPrompt" Background="Transparent" Foreground="#AAA"
+                                     BorderThickness="0" Padding="8,6" FontSize="11"
+                                     CaretBrush="#FF007F" KeyDown="TxtPrompt_KeyDown"
+                                     TextWrapping="Wrap" MaxLines="2"/>
+                        </Border>
+                        <Button Name="BtnSend" Grid.Column="1" Margin="4,0,0,0" Height="30" Width="28"
+                                Background="#FF007F" BorderThickness="0" Cursor="Hand" Click="BtnSend_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                        <TextBlock Text="▶" Foreground="White" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Zona central -->
+            <Border Grid.Column="1" Background="#0A0A0A">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="DAWY" Foreground="#111" FontSize="48" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Courier New"/>
+                    <TextBlock Text="MODO EN VIVO" Foreground="#141414" FontSize="12" HorizontalAlignment="Center" FontFamily="Courier New" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Afinador + Catálogo -->
+            <Border Grid.Column="2" Background="#0D0D0D" BorderBrush="#141414" BorderThickness="1,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Afinador compacto -->
+                    <Border Grid.Row="0" Padding="10,10" BorderBrush="#141414" BorderThickness="0,0,0,1">
+                        <StackPanel>
+                            <TextBlock Text="AFINADOR" Foreground="#222" FontSize="8" FontFamily="Courier New" FontWeight="Bold" Margin="0,0,0,6"/>
+
+                            <TextBlock Name="TxtTunerNote" Text="--" Foreground="White"
+                                       FontSize="44" FontWeight="Bold" HorizontalAlignment="Center" FontFamily="Courier New"/>
+                            <TextBlock Name="TxtTunerFreq" Text="-- Hz"
+                                       Foreground="#333" FontSize="10" HorizontalAlignment="Center" FontFamily="Courier New" Margin="0,0,0,6"/>
+
+                            <!-- Aguja -->
+                            <Grid Width="165" Height="40" HorizontalAlignment="Center" Margin="0,0,0,4">
+                                <Border Background="#111" CornerRadius="5" BorderBrush="#1A1A1A" BorderThickness="1"/>
+                                <Border Width="24" Background="#0A1A0A" CornerRadius="3" HorizontalAlignment="Center" Margin="0,4,0,4"/>
+                                <TextBlock Text="-50" Foreground="#1E1E1E" FontSize="8" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                <TextBlock Text="0" Foreground="#2A2A2A" FontSize="8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Text="+50" Foreground="#1E1E1E" FontSize="8" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <Border Name="TunerNeedle" Width="2" Height="28" Background="#FF007F" CornerRadius="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,1">
+                                    <Border.RenderTransform>
+                                        <RotateTransform x:Name="NeedleRotate" Angle="0"/>
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Grid>
+
+                            <TextBlock Name="TxtTunerStatus" Text="Inicia motor" Foreground="#333" FontSize="9" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+
+                            <!-- Cuerdas -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                <Border Name="StrE2" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="E2">
+                                    <TextBlock Text="E" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Name="StrA" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="A2">
+                                    <TextBlock Text="A" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Name="StrD" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="D3">
+                                    <TextBlock Text="D" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Name="StrG" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="G3">
+                                    <TextBlock Text="G" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Name="StrB" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="B3">
+                                    <TextBlock Text="B" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Name="StrE4" Width="22" Height="22" CornerRadius="11" Background="#141414" BorderBrush="#222" BorderThickness="1" Margin="1" Cursor="Hand" MouseLeftButtonDown="String_Click" Tag="E4">
+                                    <TextBlock Text="e" Foreground="#555" FontSize="9" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Afinaciones alternativas -->
+                            <TextBlock Text="AFINACIONES ALT." Foreground="#1E1E1E" FontSize="7" FontFamily="Courier New" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                            <WrapPanel HorizontalAlignment="Center">
+                                <Button Content="Std" Style="{StaticResource TuningBtn}" Width="32" Click="Tuning_Click" Tag="Standard"/>
+                                <Button Content="½↓" Style="{StaticResource TuningBtn}" Width="32" Click="Tuning_Click" Tag="HalfDown" ToolTip="Semitono abajo Eb Ab Db Gb Bb eb"/>
+                                <Button Content="Drop D" Style="{StaticResource TuningBtn}" Width="44" Click="Tuning_Click" Tag="DropD" ToolTip="D A D G B e"/>
+                                <Button Content="Drop C" Style="{StaticResource TuningBtn}" Width="44" Click="Tuning_Click" Tag="DropC" ToolTip="C G C F A d"/>
+                                <Button Content="Eb" Style="{StaticResource TuningBtn}" Width="30" Click="Tuning_Click" Tag="Eb" ToolTip="Eb Ab Db Gb Bb eb"/>
+                                <Button Content="D Std" Style="{StaticResource TuningBtn}" Width="44" Click="Tuning_Click" Tag="DStandard" ToolTip="D G C F A d"/>
+                                <Button Content="Open G" Style="{StaticResource TuningBtn}" Width="48" Click="Tuning_Click" Tag="OpenG" ToolTip="D G D G B D"/>
+                                <Button Content="Open E" Style="{StaticResource TuningBtn}" Width="48" Click="Tuning_Click" Tag="OpenE" ToolTip="E B E G# B E"/>
+                                <Button Content="DADGAD" Style="{StaticResource TuningBtn}" Width="52" Click="Tuning_Click" Tag="DADGAD" ToolTip="D A D G A D"/>
+                            </WrapPanel>
+                            <TextBlock Name="TxtTuningName" Text="Estándar: E A D G B e"
+                                       Foreground="#2A2A2A" FontSize="8" HorizontalAlignment="Center"
+                                       FontFamily="Courier New" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Catálogo de pedales -->
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Padding="10,7" BorderBrush="#141414" BorderThickness="0,0,0,1">
+                            <TextBlock Text="+ AGREGAR PEDAL" Foreground="#FF007F" FontSize="9" FontFamily="Courier New" FontWeight="Bold"/>
+                        </Border>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Name="CatalogPanel" Margin="8,5,8,5"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- PEDALERA GRANDE -->
+        <Border Grid.Row="2" Background="#0D0D0D" BorderBrush="#141414" BorderThickness="0,1,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Background="#0A0A0A" Padding="16,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="PEDALERA  //  MASTER BUS" Foreground="#1E1E1E"
+                                   FontSize="9" FontFamily="Courier New" FontWeight="Bold" Margin="0,0,10,0"/>
+                        <Border Width="5" Height="5" CornerRadius="3" Background="#FF007F" Margin="0,0,6,0" VerticalAlignment="Center">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#FF007F" BlurRadius="5" ShadowDepth="0"/>
+                            </Border.Effect>
+                        </Border>
+                        <TextBlock Text="INPUT ──────────────────────────────────────────────► OUTPUT"
+                                   Foreground="#141414" FontSize="8" FontFamily="Courier New" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              AllowDrop="True" Drop="Pedalboard_Drop" DragOver="Pedalboard_DragOver">
+                    <StackPanel Name="PedalboardPanel" Orientation="Horizontal"
+                                Margin="14,6,14,6" AllowDrop="True" VerticalAlignment="Center"/>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
